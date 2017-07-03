@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata: 
+  name: nexus-docker
+spec: 
+  ports: 
+    - name: nexus-docker
+      nodePort: 30011
+      port: 5000
+      protocol: TCP
+      targetPort: 5000
+  selector: 
+    app: nexus
+  type: NodePort

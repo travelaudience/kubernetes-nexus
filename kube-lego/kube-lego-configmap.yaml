@@ -1,0 +1,8 @@
+apiVersion: v1
+data: 
+  lego.email: john.doe@example.com
+  lego.url: "https://acme-staging.api.letsencrypt.org/directory"
+kind: ConfigMap
+metadata: 
+  name: kube-lego
+  namespace: kube-lego

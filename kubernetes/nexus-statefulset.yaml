@@ -1,0 +1,97 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata: 
+  labels: 
+    app: nexus
+  name: nexus
+spec: 
+  replicas: 1
+  serviceName: nexus
+  template: 
+    metadata: 
+      labels: 
+        app: nexus
+    spec: 
+      containers: 
+        - env: 
+            - name: INSTALL4J_ADD_VM_PARAMS
+              value: "-Xms1200m -Xmx1200m"
+          image: "quay.io/travelaudience/docker-nexus:3.3.2"
+          imagePullPolicy: Always
+          name: nexus
+          ports: 
+            - containerPort: 5003
+              name: nexus-docker-g
+            - containerPort: 8081
+              name: nexus-http
+          volumeMounts: 
+            - mountPath: /nexus-data
+              name: nexus-data
+            - mountPath: /nexus-data/backup
+              name: nexus-data-backup
+        - image: "nginx:1.12.0-alpine"
+          imagePullPolicy: Always
+          name: nginx
+          ports: 
+            - containerPort: 5000
+              name: nexus-docker
+          volumeMounts: 
+            - mountPath: /etc/nginx
+              name: nginx-conf
+        - env: 
+            - name: NEXUS_AUTHORIZATION
+              valueFrom: 
+                secretKeyRef: 
+                  key: nexus.authorization
+                  name: nexus
+            - name: NEXUS_BACKUP_DIRECTORY
+              value: /nexus-data/backup
+            - name: NEXUS_DATA_DIRECTORY
+              value: /nexus-data
+            - name: NEXUS_LOCAL_HOST_PORT
+              value: "localhost:8081"
+            - name: OFFLINE_REPOS
+              value: "maven-central maven-public maven-releases maven-snapshots"
+            - name: TARGET_BUCKET
+              value: "gs://nexus-backup"
+            - name: GRACE_PERIOD
+              value: 60
+            - name: TRIGGER_FILE
+              value: .backup
+          image: "quay.io/travelaudience/docker-nexus-backup:1.0.0"
+          imagePullPolicy: Always
+          name: nexus-backup
+          volumeMounts: 
+            - mountPath: /nexus-data
+              name: nexus-data
+            - mountPath: /nexus-data/backup
+              name: nexus-data-backup
+      terminationGracePeriodSeconds: 10
+      volumes: 
+        - configMap: 
+            items: 
+              - key: nginx.conf
+                path: nginx.conf
+            name: nexus-nginx-conf
+          name: nginx-conf
+  volumeClaimTemplates: 
+    - metadata: 
+        annotations: 
+          volume.beta.kubernetes.io/storage-class: standard
+        name: nexus-data
+      spec: 
+        accessModes: 
+          - ReadWriteOnce
+        resources: 
+          requests: 
+            storage: 1024Gi
+    - metadata: 
+        annotations: 
+          volume.beta.kubernetes.io/storage-class: standard
+        name: nexus-data-backup
+      spec: 
+        accessModes: 
+          - ReadWriteOnce
+        resources: 
+          requests: 
+            storage: 32Gi
