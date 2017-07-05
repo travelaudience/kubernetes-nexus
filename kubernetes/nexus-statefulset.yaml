@@ -55,7 +55,7 @@ spec:
             - name: TARGET_BUCKET
               value: "gs://nexus-backup"
             - name: GRACE_PERIOD
-              value: 60
+              value: "60"
             - name: TRIGGER_FILE
               value: .backup
           image: "quay.io/travelaudience/docker-nexus-backup:1.0.0"
