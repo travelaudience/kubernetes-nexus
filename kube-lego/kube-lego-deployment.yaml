@@ -32,7 +32,7 @@ spec:
               valueFrom: 
                 fieldRef: 
                   fieldPath: status.podIP
-          image: "jetstack/kube-lego:0.1.4"
+          image: "jetstack/kube-lego:0.1.5"
           imagePullPolicy: Always
           name: kube-lego
           ports: 
