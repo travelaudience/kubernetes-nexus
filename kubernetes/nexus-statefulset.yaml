@@ -16,7 +16,7 @@ spec:
         - env: 
             - name: INSTALL4J_ADD_VM_PARAMS
               value: "-Xms1200m -Xmx1200m"
-          image: "quay.io/travelaudience/docker-nexus:3.3.2"
+          image: "quay.io/travelaudience/docker-nexus:3.4.0"
           imagePullPolicy: Always
           name: nexus
           ports: 
