@@ -54,6 +54,44 @@ Make sure your choose `5003` as the port for the HTTP connector and `default` as
 the underlying blob store. Finally, click _Create repository_ to finish the
 process.
 
+## Configure the `pypi-all` repository group
+
+In order for Nexus to act as a repository for Python software it is necessary to
+create a `pypi-all` repository that will group together two other repositories —
+a `pypi-proxied` repository, which will proxy packages from
+[PyPI](https://pypi.python.org/pypi), and a `pypi-hosted` repository, which will
+host packages developed internally.
+
+### Configuring `pypi-proxied`
+
+Head over to _Administration/Repositories_, click _Create repository_, choose
+the `pypi (proxy)` recipe and configure it according to the following settings:
+
+![pypi-proxied](pypi-proxied.png)
+
+Please make sure you choose `proxied` as the underlying blob store. Finally,
+click _Create repository_ to finish the process.
+
+### Configuring `pypi-hosted`
+
+Head over to _Administration/Repositories_, click _Create repository_, choose
+the `pypi (hosted)` recipe and configure it according to the following settings:
+
+![pypi-hosted](pypi-hosted.png)
+
+Please make sure you choose `default` as the underlying blob store. Finally,
+click _Create repository_ to finish the process.
+
+### Configuring `pypi-all`
+
+Head over to _Administration/Repositories_, click _Create repository_, choose
+the `pypi (group)` recipe and configure it according to the following settings:
+
+![pypi-all](pypi-all.png)
+
+Please make sure you choose `default` as the underlying blob store. Finally,
+click _Create repository_ to finish the process.
+
 ## Configure backup tasks and create backup scripts
 
 For the implemented backup process to work as expected you must create a couple
