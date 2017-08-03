@@ -22,7 +22,8 @@ Nexus Repository Manager OSS (3.3.2) on top of Kubernetes.
 
 ## Pre-Requisites
 
-* A working Kubernetes cluster (v1.7.1 or newer).
+* A working Kubernetes cluster (v1.7.1 or newer) with Cloud Storage read-write
+permissions enabled (`https://www.googleapis.com/auth/devstorage.read_write` scope)
 * A working installation of `kubectl` configured to access the
   cluster.
 * A working installation of `gcloud` configured to access the Google Cloud
