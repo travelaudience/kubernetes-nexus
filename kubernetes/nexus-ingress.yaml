@@ -1,30 +1,30 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
-metadata: 
-  annotations: 
+metadata:
+  annotations:
     kubernetes.io/ingress.allow-http: "true" # NOTE: Can't use 'false' due to https://git.io/vHMqC.
     kubernetes.io/ingress.class: gce
     kubernetes.io/ingress.global-static-ip-name: your-static-ip-name
     kubernetes.io/tls-acme: "true"
   name: nexus
-spec: 
-  rules: 
+spec:
+  rules:
     - host: containers.example.com
-      http: 
-        paths: 
-          - backend: 
+      http:
+        paths:
+          - backend:
               serviceName: nexus-docker
               servicePort: 5000
             path: /*
     - host: nexus.example.com
-      http: 
-        paths: 
-          - backend: 
+      http:
+        paths:
+          - backend:
               serviceName: nexus-http
               servicePort: 8081
             path: /*
-  tls: 
-    - hosts: 
+  tls:
+    - hosts:
         - containers.example.com
         - nexus.example.com
       secretName: nexus-tls

@@ -1,14 +1,14 @@
 apiVersion: v1
 kind: Service
-metadata: 
+metadata:
   name: nexus-http
-spec: 
-  ports: 
+spec:
+  ports:
     - name: nexus-http
       nodePort: 30013
       port: 8081
       protocol: TCP
       targetPort: 8081
-  selector: 
+  selector:
     app: nexus
   type: NodePort
