@@ -17,7 +17,8 @@ Nexus Repository Manager OSS (3.3.2) on top of Kubernetes.
 
 ## Pre-Requisites
 
-* A working Kubernetes cluster (≥ v1.7.1).
+* A working GKE cluster (≥ v1.7.2) with Cloud Storage read-write
+  permissions enabled (`https://www.googleapis.com/auth/devstorage.read_write` scope)
 * A working installation of `kubectl` configured to access the
   cluster.
 * A working installation of `gcloud` configured to access the Google Cloud
@@ -93,6 +94,9 @@ Please head over to
 for information on how to configure Nexus.
 
 ### Configuring Backup Retention
+
+**Attention**: As mentioned in the pre-requisites, the GKE cluster needs read-write
+permissions on GCP Cloud Storage in order to upload backups.
 
 The backup procedure uses Google Cloud Storage to save backups. In order to
 configure a backup retetion policy, head over to the `backup-lifecycle`
