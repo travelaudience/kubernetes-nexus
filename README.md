@@ -100,6 +100,9 @@ for information on how to configure Nexus.
 
 ### Configuring Backup Retention
 
+**Attention**: As mentioned in the pre-requisites, the GKE cluster needs read-write
+permissions on GCP Cloud Storage in order to upload backups.
+
 The backup procedure uses Google Cloud Storage to save backups. In order to
 configure a backup retetion policy, head over to the `backup-lifecycle`
 directory and install one of the available policies by running:
@@ -149,6 +152,9 @@ Please, read [Using Nexus with sbt](docs/usage/using-nexus-with-sbt.md).
 Please, read [Using Nexus with Python](docs/usage/using-nexus-with-python.md).
 
 ## Backup and Restore
+
+**Attention**: As mentioned in the pre-requisites, the GKE cluster needs read-write
+permissions on GCP Cloud Storage in order to upload backups.
 
 ### Backup
 
