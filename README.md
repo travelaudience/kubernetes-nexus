@@ -10,15 +10,19 @@ Nexus Repository Manager OSS (3.3.2) on top of Kubernetes.
   * [Securing the Deployment with HTTPS](#securing-the-deployment-with-https)
   * [Configuring Nexus](#configuring-nexus)
   * [Configuring Backup Retention](#configuring-backup-retention)
-* [Using Nexus with Docker, Maven, Gradle and SBT](#using-nexus-with-docker-maven-gradle-and-sbt)
+* [Using Nexus](#usage)
+  *  [Docker](#usage-docker)
+  *  [Maven](#usage-maven)
+  *  [Gradle](#usage-gradle)
+  *  [sbt](#usage-sbt)
+  *  [Python](#usage-python)
 * [Backup and Restore](#backup-and-restore)
   * [Backup](#backup)
   * [Restore](#restore)
 
 ## Pre-Requisites
 
-* A working GKE cluster (≥ v1.7.2) with Cloud Storage read-write
-  permissions enabled (`https://www.googleapis.com/auth/devstorage.read_write` scope)
+* A working Kubernetes cluster (v1.7.1 or newer).
 * A working installation of `kubectl` configured to access the
   cluster.
 * A working installation of `gcloud` configured to access the Google Cloud
@@ -95,9 +99,6 @@ for information on how to configure Nexus.
 
 ### Configuring Backup Retention
 
-**Attention**: As mentioned in the pre-requisites, the GKE cluster needs read-write
-permissions on GCP Cloud Storage in order to upload backups.
-
 The backup procedure uses Google Cloud Storage to save backups. In order to
 configure a backup retetion policy, head over to the `backup-lifecycle`
 directory and install one of the available policies by running:
@@ -109,11 +110,42 @@ $ ./gsutil-lifecycle-set <policy-file> <bucket-name>
 Google Cloud Storage will then automatically purge backups older than the number
 of days specified.
 
-## Using Nexus with Docker, Maven, Gradle and SBT
+<a id="usage">
 
-For detailed instructions on how to configure these tools to download and upload
-artifacts to Nexus, please refer to
-[docs/usage](docs/usage/).
+## Using Nexus
+
+Below are linked detailed instructions on how to configure a bunch of tools
+in order to download and upload artifacts from and to Nexus.
+
+<a id="usage-docker">
+
+### Docker
+
+Please, read [Using Nexus with Docker](docs/usage/using-nexus-with-docker.md).
+
+<a id="usage-maven">
+
+### Maven
+
+Please, read [Using Nexus with Maven](docs/usage/using-nexus-with-maven.md).
+
+<a id="usage-gradle">
+
+### Gradle
+
+Please, read [Using Nexus with Gradle](docs/usage/using-nexus-with-gradle.md).
+
+<a id="usage-sbt">
+
+### sbt
+
+Please, read [Using Nexus with sbt](docs/usage/using-nexus-with-sbt.md).
+
+<a id="usage-python">
+
+### Python
+
+Please, read [Using Nexus with Python](docs/usage/using-nexus-with-python.md).
 
 ## Backup and Restore
 
