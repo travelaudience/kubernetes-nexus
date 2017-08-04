@@ -2,7 +2,7 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   annotations:
-    kubernetes.io/ingress.allow-http: "true" # NOTE: Can't use 'false' due to https://git.io/vHMqC.
+    kubernetes.io/ingress.allow-http: "true" # NOTE: Can't use 'false' due to https://github.com/jetstack/kube-lego/issues/173.
     kubernetes.io/ingress.class: gce
     kubernetes.io/ingress.global-static-ip-name: your-static-ip-name
     kubernetes.io/tls-acme: "true"
