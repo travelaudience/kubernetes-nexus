@@ -52,7 +52,7 @@ and create a Kubernetes secret containing it, and only then deploy Nexus.
 That can be done as follows:
 
 ```bash
-$ cd nexus/
+$ cd kubernetes/
 $ NEXUS_CREDENTIALS=$(echo -n 'admin:<new-password>' | base64)
 $ NEXUS_AUTH=$(echo -n "Basic ${NEXUS_CREDENTIALS}" | base64)
 $ sed -i.bkp "s/QmFzaWMgWVdSdGFXNDZZV1J0YVc0eE1qTT0=/${NEXUS_AUTH}/" nexus-secret.yaml

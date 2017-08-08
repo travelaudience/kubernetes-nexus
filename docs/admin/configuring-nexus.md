@@ -29,7 +29,7 @@ blob store associated with an already existing repository, so you must delete
 the `maven-central` repository and re-create it.
 
 Head-over to _Administration/Repositories_, click _Create repository_, choose
-the `maven (proxied)` recipe and configure it according to the following settings:
+the `maven2 (proxy)` recipe and configure it according to the following settings:
 
 ![maven-central](maven-central.png)
 
