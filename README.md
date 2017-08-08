@@ -1,6 +1,6 @@
 # kubernetes-nexus
 
-Nexus Repository Manager OSS (3.3.2) on top of Kubernetes.
+Nexus Repository Manager OSS (3.4.0) on top of Kubernetes.
 
 ## Table of Contents
 
