@@ -95,8 +95,9 @@ certificates are requested, hence the annotation `kubernetes.io/ingress.allow-ht
 in [`nexus-ingress.yaml`](kubernetes/nexus-ingress.yaml) must be set to `"true"`.
 
 If everything goes well, after a while one will
-be able to access https://nexus.example.com securely **and** proceed to change
-the `admin` user password to the secure password one decided above.
+be able to access https://nexus.example.com securely **and** proceed to log-in
+into Nexus with the default credentials (`admin:admin123`), and finally change
+the `admin` password to the secure password one decided above.
 
 ### Configuring Nexus
 
