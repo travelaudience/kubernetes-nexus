@@ -88,11 +88,11 @@ $ kubectl create -f kube-lego-deployment.yaml
 ```
 
 As soon as it starts, `kube-lego` will start monitoring _Ingress_ resources and
-requesting certificates from Let's Encrypt. Please note that Let's Encrypt must
-be able to reach port `80` on domains for which certificates are requested, and
-thus the value of the `kubernetes.io/ingress.allow-http` annotation on
-[`nexus-ingress.yaml`](kubernetes/nexus-ingress.yaml)
-must be set to `"true"`.
+requesting certificates from Let's Encrypt.
+
+**NOTE**: Let's Encrypt must be able to reach port `80` on domains for which
+certificates are requested, hence the annotation `kubernetes.io/ingress.allow-http`
+in [`nexus-ingress.yaml`](kubernetes/nexus-ingress.yaml) must be set to `"true"`.
 
 If everything goes well, after a while one will
 be able to access https://nexus.example.com securely **and** proceed to change
