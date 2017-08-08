@@ -7,7 +7,7 @@ Nexus Repository Manager OSS (3.3.2) on top of Kubernetes.
 * [Pre-Requisites](#pre-requisites)
 * [Deployment](#deployment)
   * [Deploying Nexus](#deploying-nexus)
-  * [Securing the Deployment with HTTPS](#securing-the-deployment-with-https)
+  * [Securing Nexus with HTTPS](#securing-nexus-with-https)
   * [Configuring Nexus](#configuring-nexus)
   * [Configuring Backup Retention](#configuring-backup-retention)
 * [Using Nexus](#usage)
@@ -28,7 +28,7 @@ permissions enabled (`https://www.googleapis.com/auth/devstorage.read_write` sco
   cluster.
 * A working installation of `gcloud` configured to access the Google Cloud
   Platform project.
-* A global static IPv4 address (e.g., `your-static-ip-name`).
+* A global static IPv4 address (e.g., `static-ip-name`).
 * A DNS A record `nexus.example.com` pointing to this IPv4 address.
 * A DNS CNAME record `containers.example.com` pointing to
   `nexus.example.com`.
@@ -39,16 +39,21 @@ permissions enabled (`https://www.googleapis.com/auth/devstorage.read_write` sco
 
 ### Deploying Nexus
 
-The first thing you should do after deploying Nexus is to change the default
-admin credentials (`admin:admin123`) to something secure. Thus, and since the
-`nexus-backup` container uses these credentials to access the Nexus API, you
-should update
-[`nexus-secret.yaml`](kubernetes/nexus-secret.yaml)
-to reflect this (future) change:
+The very first thing one **must do** after deploying Nexus is to log-in into the
+Nexus UI with the default credentials (`admin:admin123` ) and proceed to change
+the password to something more secure. But one **must not** do it right away!
+One will do it after [securing Nexus with HTTPS](#securing-nexus-with-https).
+
+The `nexus-backup` container uses the aforementioned credentials to
+access the Nexus API and execute backups. The same credentials are provided
+during deployment. Therefore, before deploying Nexus, logging-in and changing
+the password as instructed above, one **must** decide what password will be set
+and create a Kubernetes secret containing it, and only then deploy Nexus.
+That can be done as follows:
 
 ```bash
 $ cd nexus/
-$ NEXUS_CREDENTIALS=$(echo -n '<new-username>:<new-password>' | base64)
+$ NEXUS_CREDENTIALS=$(echo -n 'admin:<new-password>' | base64)
 $ NEXUS_AUTH=$(echo -n "Basic ${NEXUS_CREDENTIALS}" | base64)
 $ sed -i.bkp "s/QmFzaWMgWVdSdGFXNDZZV1J0YVc0eE1qTT0=/${NEXUS_AUTH}/" nexus-secret.yaml
 ```
@@ -64,13 +69,13 @@ $ kubectl create -f nexus-http-svc.yaml
 $ kubectl create -f nexus-ingress.yaml
 ```
 
-You should allow for 5 to 10 minutes for GCLB to update. Nexus should then
+One should allow for 5 to 10 minutes for GCLB to update. Nexus should then
 become available over HTTP at http://nexus.example.com.
 
-### Securing the Deployment with HTTPS
+### Securing Nexus with HTTPS
 
-In order to secure the deployment one must configure HTTPS access. The easiest
-and cheapest way to obtain a trusted TLS certicate is using
+In order to secure Nexus external access one must configure HTTPS access.
+The easiest and cheapest way to obtain a trusted TLS certicate is using
 [Let's Encrypt](https://letsencrypt.org/), and the easiest way to automate the
 process of obtaining and renewing certificates from Let's Encrypt is by using
 [`kube-lego`](https://github.com/jetstack/kube-lego):
@@ -89,8 +94,9 @@ thus the value of the `kubernetes.io/ingress.allow-http` annotation on
 [`nexus-ingress.yaml`](kubernetes/nexus-ingress.yaml)
 must be set to `"true"`.
 
-If everything goes well, after a while you will
-be able to access https://nexus.example.com securely.
+If everything goes well, after a while one will
+be able to access https://nexus.example.com securely **and** proceed to change
+the `admin` user password to the secure password one decided above.
 
 ### Configuring Nexus
 
@@ -231,6 +237,6 @@ $ mv /nexus-service/ /etc/service/nexus/         # Make `runsvdir` start Nexus a
 $ exit                                           # Bye!
 ```
 
-If you watch the `nexus` container logs as it boots you should see an indication
+If one watches the `nexus` container logs as it boots, one should see an indication
 that a restore procedure is in place. After a few minutes access should be
 restored with the last known good backup in place.
