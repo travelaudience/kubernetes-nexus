@@ -21,6 +21,7 @@ spec:
           name: nexus
           resources:
             requests:
+              cpu: 250m
               # Based on https://support.sonatype.com/hc/en-us/articles/115006448847#mem
               # and https://twitter.com/analytically/status/894592422382063616:
               #   Xms == Xmx
