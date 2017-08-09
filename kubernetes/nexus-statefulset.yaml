@@ -70,7 +70,7 @@ spec:
               value: "60"
             - name: TRIGGER_FILE
               value: .backup
-          image: "quay.io/travelaudience/docker-nexus-backup:1.1.0"
+          image: "quay.io/travelaudience/docker-nexus-backup:1.2.0"
           imagePullPolicy: Always
           name: nexus-backup
           volumeMounts:
