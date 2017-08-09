@@ -16,7 +16,7 @@ spec:
         - env:
             - name: INSTALL4J_ADD_VM_PARAMS
               value: "-Xms1200M -Xmx1200M -XX:MaxDirectMemorySize=2G -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-          image: "quay.io/travelaudience/docker-nexus:3.4.0"
+          image: "quay.io/travelaudience/docker-nexus:3.5.0"
           imagePullPolicy: Always
           name: nexus
           resources:
