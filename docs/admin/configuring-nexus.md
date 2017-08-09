@@ -72,7 +72,7 @@ One is to make sure to choose `5003` as the port for the HTTP connector and
 `default` as the underlying blob store.
 Finally, one is to click _Create repository_ to finish the process.
 
-<a id="pypi-all>
+<a id="pypi-all">
 
 ## Configure the `pypi-all` repository group
 
@@ -118,6 +118,17 @@ Finally, one is to click _Create repository_ to finish the process.
 
 For the implemented backup process to work as expected, one must create a couple
 of periodic tasks.
+
+**Attention**: Nexus provides default intervals, e.g. daily, but also supports
+[CRON notation](https://en.wikipedia.org/wiki/Cron) for advanced configuration.
+While this tool tries to amenize any misconfigurations, __be warned that erroneous
+cron expressions may lead to corrupt backups or even no backups at all__.
+
+>One clear example of this was one tester who wanted thirty (30) minute intervals
+between backups, defined the cron expression as `* */30 * * *` instead of
+`0 0/30 * * *`. This resulted in a backup process being queued every second,
+instead.
+For more details check [Configuring and Executing Tasks](https://help.sonatype.com/display/HSC/Configuration+-+NXRM+3#Configuration-NXRM3-ConfiguringandExecutingTasks).
 
 The first task, called `backup-1`, is responsible for triggering the backup
 procedure itself.
