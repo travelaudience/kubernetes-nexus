@@ -213,30 +213,35 @@ container should be restored. In order to achieve this, Nexus must be stopped.
 The procedure goes as follows:
 
 ```
-$ kubectl exec -i -t nexus-0 /bin/sh # Enter the container.
+$ kubectl exec -i -t nexus-0 --container nexus -- sh # Enter the container.
 $ mv /etc/service/nexus/ /nexus-service/         # Prevent `runsvdir` from respawning Nexus after the next step is performed.
 $ pkill java                                     # Ask for Nexus to terminate gracefully.
 ```
 
 At this point, Nexus is stopped but the container is still running, giving us a
-chance to perform the restore procedure. It should go as follows:
+chance to perform the restore procedure. (Do not close this terminal yet)
+
+Open another terminal window and login into the nexus-backup container so that you can use gsutil to retrieve the desired backup.
+`kubectl exec -i -t nexus-0 --container nexus-backup -- sh`
+
+Now one should go as follows:
 
 1. Retrieve from GCS the `blobstore.tar` and `databases.tar` files
    from the last known good backup.
-1. Remove everything _under_ `/nexus-data/backup/` and
-   `/nexus-data/blob/default/`.
-1. Untar `blobstore.tar` into `/nexus-data/blob/default/`, stripping paths if
-   necessary.
-1. Untar `databases.tar` into `/nexus-data/backup/`, stripping paths if
-   necessary.
+1. Remove everything _under_ `/nexus-data/backup/`,
+   `/nexus-data/blobs/default/` and `/nexus-data/db/`
+1. `tar -xvf blobstore.tar --strip-components 3 -C /nexus-data/blobs/default/`.
+1. `tar -xvf databases.tar --strip-components 2 -C /nexus-data/backup/`
 
-At this point the backup is ready to be restored by Nexus, which will happen
-automatically once the service is started:
+At this point the backup is ready to be restored by Nexus and you can leave the _nexus-backup_ container.
+Now go back to the terminal of the _nexus_ container and do:
 
 ```
 $ mv /nexus-service/ /etc/service/nexus/         # Make `runsvdir` start Nexus again.
 $ exit                                           # Bye!
 ```
+
+This will automatically start nexus and restore the backups.
 
 If one watches the `nexus` container logs as it boots, one should see an indication
 that a restore procedure is in place. After a few minutes access should be
