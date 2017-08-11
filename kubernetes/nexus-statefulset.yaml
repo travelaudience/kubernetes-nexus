@@ -41,15 +41,29 @@ spec:
               name: nexus-data
             - mountPath: /nexus-data/backup
               name: nexus-data-backup
-        - image: "nginx:1.12.0-alpine"
+        - env:
+            - name: ALLOWED_USER_AGENTS_ON_ROOT_REGEX
+              value: "GoogleHC"
+            - name: BIND_PORT
+              value: "8080"
+            - name: NEXUS_DOCKER_HOST
+              value: "containers.example.com"
+            - name: NEXUS_HTTP_HOST
+              value: "nexus.example.com"
+            - name: NEXUS_RUT_HEADER
+              value: "X-Forwarded-For"
+            - name: UPSTREAM_DOCKER_PORT
+              value: "5003"
+            - name: UPSTREAM_HTTP_PORT
+              value: "8081"
+            - name: UPSTREAM_HOST
+              value: "localhost"
+          image: "quay.io/travelaudience/docker-nexus-proxy:2.0.0"
           imagePullPolicy: Always
-          name: nginx
+          name: nexus-proxy
           ports:
-            - containerPort: 5000
-              name: nexus-docker
-          volumeMounts:
-            - mountPath: /etc/nginx
-              name: nginx-conf
+            - containerPort: 8080
+              name: nexus-proxy
         - env:
             - name: NEXUS_AUTHORIZATION
               valueFrom:
@@ -79,13 +93,6 @@ spec:
             - mountPath: /nexus-data/backup
               name: nexus-data-backup
       terminationGracePeriodSeconds: 10
-      volumes:
-        - configMap:
-            items:
-              - key: nginx.conf
-                path: nginx.conf
-            name: nexus-nginx-conf
-          name: nginx-conf
   volumeClaimTemplates:
     - metadata:
         annotations:

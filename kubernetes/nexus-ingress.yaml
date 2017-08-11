@@ -13,15 +13,15 @@ spec:
       http:
         paths:
           - backend:
-              serviceName: nexus-docker
-              servicePort: 5000
+              serviceName: nexus-proxy
+              servicePort: 8080
             path: /*
     - host: nexus.example.com
       http:
         paths:
           - backend:
-              serviceName: nexus-http
-              servicePort: 8081
+              serviceName: nexus-proxy
+              servicePort: 8080
             path: /*
   tls:
     - hosts:

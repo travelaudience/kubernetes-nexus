@@ -58,13 +58,13 @@ $ NEXUS_AUTH=$(echo -n "Basic ${NEXUS_CREDENTIALS}" | base64)
 $ sed -i.bkp "s/QmFzaWMgWVdSdGFXNDZZV1J0YVc0eE1qTT0=/${NEXUS_AUTH}/" nexus-secret.yaml
 ```
 
-After updating `nexus-secret.yaml`, deploying Nexus is a matter of running
+After updating `nexus-secret.yaml`, deploying Nexus as follows:
 
 ```bash
 $ kubectl create -f nexus-configmap.yaml
 $ kubectl create -f nexus-secret.yaml
 $ kubectl create -f nexus-statefulset.yaml
-$ kubectl create -f nexus-docker-svc.yaml
+$ kubectl create -f nexus-proxy-svc.yaml
 $ kubectl create -f nexus-http-svc.yaml
 $ kubectl create -f nexus-ingress.yaml
 ```
