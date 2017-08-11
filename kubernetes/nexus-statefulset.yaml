@@ -44,6 +44,8 @@ spec:
         - env:
             - name: ALLOWED_USER_AGENTS_ON_ROOT_REGEX
               value: "GoogleHC"
+            - name: CLOUD_IAM_AUTH_ENABLED
+              value: "false"
             - name: BIND_PORT
               value: "8080"
             - name: NEXUS_DOCKER_HOST
