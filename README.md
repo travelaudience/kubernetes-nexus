@@ -60,6 +60,9 @@ $ sed -i.bkp "s/QmFzaWMgWVdSdGFXNDZZV1J0YVc0eE1qTT0=/${NEXUS_AUTH}/" nexus-secre
 
 After updating `nexus-secret.yaml`, deploying Nexus as follows:
 
+**Attention**: If one wants to have GCP IAM authentication enabled, one must
+follow [the following instructions](docs/admin/configuring-nexus-proxy.md).
+
 ```bash
 $ kubectl create -f nexus-configmap.yaml
 $ kubectl create -f nexus-secret.yaml

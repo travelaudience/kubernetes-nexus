@@ -1,0 +1,145 @@
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  labels:
+    app: nexus
+  name: nexus
+spec:
+  replicas: 1
+  serviceName: nexus
+  template:
+    metadata:
+      labels:
+        app: nexus
+    spec:
+      containers:
+        - env:
+            - name: INSTALL4J_ADD_VM_PARAMS
+              value: "-Xms1200M -Xmx1200M -XX:MaxDirectMemorySize=2G -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+          image: "quay.io/travelaudience/docker-nexus:3.5.0"
+          imagePullPolicy: Always
+          name: nexus
+          resources:
+            requests:
+              cpu: 250m
+              # Based on https://support.sonatype.com/hc/en-us/articles/115006448847#mem
+              # and https://twitter.com/analytically/status/894592422382063616:
+              #   Xms == Xmx
+              #   Xmx <= 4G
+              #   MaxDirectMemory >= 2G
+              #   Xmx + MaxDirectMemory <= RAM * 2/3 (hence the request for 4800Mi)
+              #   MaxRAMFraction=1 is not being set as it would allow the heap
+              #     to use all the available memory.
+              memory: 4800Mi
+          ports:
+            - containerPort: 5003
+              name: nexus-docker-g
+            - containerPort: 8081
+              name: nexus-http
+          volumeMounts:
+            - mountPath: /nexus-data
+              name: nexus-data
+            - mountPath: /nexus-data/backup
+              name: nexus-data-backup
+        - env:
+            - name: ALLOWED_USER_AGENTS_ON_ROOT_REGEX
+              value: "GoogleHC"
+            - name: CLOUD_IAM_AUTH_ENABLED
+              value: "true"
+            - name: BIND_PORT
+              value: "8080"
+            - name: NEXUS_DOCKER_HOST
+              value: "containers.example.com"
+            - name: NEXUS_HTTP_HOST
+              value: "nexus.example.com"
+            - name: NEXUS_RUT_HEADER
+              value: "X-Forwarded-For"
+            - name: UPSTREAM_DOCKER_PORT
+              value: "5003"
+            - name: UPSTREAM_HTTP_PORT
+              value: "8081"
+            - name: UPSTREAM_HOST
+              value: "localhost"
+            - name: CLIENT_ID
+              value: "REPLACE_ME"
+            - name: CLIENT_SECRET
+              value: "REPLACE_ME"
+            - name: ORGANIZATION_ID
+              value: "REPLACE_ME"
+            - name: REDIRECT_URL
+              value: "https://nexus.example.com/oauth/callback"
+            - name: KEYSTORE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: nexus-proxy-ks
+                  key: password
+            - name: KEYSTORE_PATH
+              value: "/nexus-proxy-ks/keystore"
+            - name: AUTH_CACHE_TTL
+              value: "60000"
+            - name: SESSION_TTL
+              value: "86400000"
+          image: "quay.io/travelaudience/docker-nexus-proxy:2.0.0"
+          imagePullPolicy: Always
+          name: nexus-proxy
+          ports:
+            - containerPort: 8080
+              name: nexus-proxy
+          volumeMounts:
+            - mountPath: /nexus-proxy-ks
+              name: nexus-proxy-ks
+              readOnly: true
+        - env:
+            - name: NEXUS_AUTHORIZATION
+              valueFrom:
+                secretKeyRef:
+                  key: nexus.authorization
+                  name: nexus
+            - name: NEXUS_BACKUP_DIRECTORY
+              value: /nexus-data/backup
+            - name: NEXUS_DATA_DIRECTORY
+              value: /nexus-data
+            - name: NEXUS_LOCAL_HOST_PORT
+              value: "localhost:8081"
+            - name: OFFLINE_REPOS
+              value: "maven-central maven-public maven-releases maven-snapshots"
+            - name: TARGET_BUCKET
+              value: "gs://nexus-backup"
+            - name: GRACE_PERIOD
+              value: "60"
+            - name: TRIGGER_FILE
+              value: .backup
+          image: "quay.io/travelaudience/docker-nexus-backup:1.2.0"
+          imagePullPolicy: Always
+          name: nexus-backup
+          volumeMounts:
+            - mountPath: /nexus-data
+              name: nexus-data
+            - mountPath: /nexus-data/backup
+              name: nexus-data-backup
+      terminationGracePeriodSeconds: 10
+      volumes:
+        - name: nexus-proxy-ks
+          secret:
+            secretName: nexus-proxy-ks
+  volumeClaimTemplates:
+    - metadata:
+        annotations:
+          volume.beta.kubernetes.io/storage-class: standard
+        name: nexus-data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1024Gi
+    - metadata:
+        annotations:
+          volume.beta.kubernetes.io/storage-class: standard
+        name: nexus-data-backup
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 32Gi
