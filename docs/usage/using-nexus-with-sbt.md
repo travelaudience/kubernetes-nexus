@@ -1,15 +1,17 @@
-# Using Nexus with SBT
+# Using Nexus with sbt
 
-[SBT](http://www.scala-sbt.org/) can be configured to download artifacts from
-Nexus instead of Maven Central. Most of the time this speeds up build processes
-(by caching commonly used dependencies) and helps ensuring reproducible builds.
+Configuring `sbt` to download artifacts from Nexus instead of Maven Central
+will, most of the time, not only speed up build processes by
+caching commonly used dependencies but also help ensuring reproducible builds,
+since one only depends on their Nexus availability and not the public repositories.
 
-SBT can also be configured to upload artifacts to Nexus, allowing for sharing
-private artifacts between teams.
+`sbt` can also be configured to upload artifacts to Nexus, enabling the management
+of artifacts private to an organization.
 
 ## Downloading artifacts from Nexus
 
-To make SBT use Nexus to download artifacts, add this to your `build.scala`:
+In order to enable `sbt` to download artifacts from Nexus, one is to add the
+following to `build.scala`:
 
 ```scala
 // This will use Nexus as a resolver.
@@ -18,10 +20,10 @@ resolvers += "My Nexus" at "https://nexus.example.com/repository/maven-public/"
 externalResolvers := Resolver.withDefaultResolvers(resolvers.value, mavenCentral = false)
 ```
 
-You can check that your configuration is working by deleting the `~/.ivy2/cache`
-directory — making sure you have a backup — and running
+One can check if their configuration is working by deleting the `~/.ivy2/cache`
+directory and running:
 
-```
+```shell
 $ sbt run
 (...)
 [info] downloading https://nexus.example.com/repository/maven-public/org/scala-lang/scala-library/2.12.1/scala-library-2.12.1.jar ...
@@ -33,38 +35,42 @@ $ sbt run
 
 ## Uploading artifacts to Nexus
 
-To upload build artifacts to Nexus you must configure the `publish` task:
+In order to enable `sbt` to upload build artifacts to Nexus, one must configure
+the `publish` task as follows:
 
 ```scala
 publishTo := {
   val nexus = "https://nexus.example.com"
 
   if (isSnapshot.value)
-    Some("snapshots" at nexus + "/repository/maven-snapshots") 
+    Some("snapshots" at nexus + "/repository/maven-snapshots")
   else
     Some("releases"  at nexus + "/repository/maven-releases")
 }
 ```
 
-Also, you must provide your Nexus credentials. The best way is to load them from
-`~/.ivy2/.credentials`:
+Also, one must provide their Nexus credentials.
+The best way is to store and load them from `~/.ivy2/.credentials`:
 
 ```scala
 credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 ```
 
-Then, create `~/.ivy2/.credentials` and add the following lines:
+`~/.ivy2/.credentials` should look like follows:
 
 ```
 realm=Sonatype Nexus Repository Manager
 host=nexus.example.com
-user=<your-username>
-password=<your-password>
+user=<the-username>
+password=<the-password>
 ```
 
-Now, running the `publish` task will output something along the lines of:
+**Attention:** If GCP IAM authentication is enabled, [username and password
+**are not** the GCP organization credentials](../admin/configuring-nexus-proxy.md/#usage).
 
-```
+Now, running the `publish` task will look like follows:
+
+```shell
 $ sbt publish
 (...)
 [info] 	published dojo-nexus-sbt_2.12 to https://nexus.example.com/repository/maven-snapshots/com/example/dojo-nexus-sbt_2.12/1.0.0-SNAPSHOT/dojo-nexus-sbt_2.12-1.0.0-SNAPSHOT.pom
@@ -76,6 +82,7 @@ $ sbt publish
 
 ### Encrypting credentials
 
-It's generally—if not always—a good idea to encrypt credentials. However, unlike
-Maven or Gradle, SBT doesn't provide a built-in or easy way to encrypt
-repository credentials.
+**Note**: Encrypting credentials is a security best-pratice.
+
+Unfortunately, unlike Maven or Gradle, `sbt` doesn't seem to provide a built-in
+or community-provided mechanism to encrypt credentials.

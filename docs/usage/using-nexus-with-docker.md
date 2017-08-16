@@ -1,32 +1,33 @@
 # Using Nexus with Docker
 
 Nexus includes a Docker registry where private images may be hosted so that they
-can be shared across teams. To configure Docker, you must first login using your
+can be shared across teams. To configure Docker, one must first login using one's
 Nexus credentials:
 
 ```
 $ docker login containers.example.com
 ```
 
-This will ask you for your Nexus username and password.
+**Attention:** If GCP IAM authentication is enabled, [username and password
+**are not** the GCP organization credentials](../admin/configuring-nexus-proxy.md/#usage).
 
 ## Publishing a Docker image
 
-To publish a Docker image to the Nexus Docker registry you must tag the image
-according to the following nomenclature:
+To publish a Docker image to the Nexus Docker registry one must tag the image
+as follows:
 
 ```
 containers.example.com/<group-name>/<image-name>:<tag>
 ```
 
-After the image is built and tagged, you must run the following to publish it to
-the registry:
+After the image is built and tagged, one must run the following to publish it to
+the Nexus registry:
 
 ```
 $ docker push containers.example.com/<group-name>/<image-name>:<tag>
 ```
 
-Here's a concrete example on how to build and publish an image:
+Here's a concrete example of how to build and publish a private container image:
 
 ```
 $ docker build -t containers.example.com/devops/docker-nexus:3.3.2 .
@@ -41,14 +42,13 @@ The push refers to a repository [containers.example.com/devops/docker-nexus]
 
 ## Pulling a Docker image
 
-Pulling a Docker image from the Nexus Docker registry is as simple as running
+Pulling a Docker image from the Nexus Docker registry is as simple as running:
 
 ```
 $ docker pull containers.example.com/<group-name>/<image-name>:<tag>
 ```
 
-For example, after running the example on the previous section we could run the
-following from a different workstation or server:
+Here's a concrete example of how to pull a private container image:
 
 ```
 $ docker pull containers.example.com/devops/docker-nexus:3.3.2
@@ -62,10 +62,16 @@ The image has been pulled successfully and is now available locally.
 
 ## Pulling a Docker image from within Kubernetes
 
-In order to pull a Docker image from a private registry from within Kubernetes
-a few steps are needed. First, a secret containing the necessary Docker config
-must be created. In order to do this, search your `~/.docker/config.json` for
-your credentials to `containers.example.com`:
+For Kubernetes to be able to pull a private container image, a secret containing
+the necessary Docker configuration must be created. One simple way to do it is to
+log-in (`docker login`) to the container registry and check the generated
+configuration as follows:
+
+```shell
+$ cat ~/.docker/config.json
+```
+
+The result should look as below:
 
 ```json
 {
@@ -77,7 +83,7 @@ your credentials to `containers.example.com`:
 }
 ```
 
-Grab the base-64 encoded value in `auth` and run:
+One is to copy the base-64 encoded value of key `auth` and run:
 
 ```bash
 $ cat << EOF | base64
@@ -93,7 +99,8 @@ EOF
 ewogICJjb250YWluZXJzLmV4YW1wbGUuY29tIjogewogICAgInVzZXJuYW1lIjogInVzZXJuYW1lIiwKICAgICJwYXNzd29yZCI6ICJwYXNzd29yZCIsCiAgICAiZW1haWwiOiAiam9obi5kb2VAZXhhbXBsZS5jb20iLAogICAgImF1dGgiOiAiZFhObGNtNWhiV1U2Y0dGemMzZHZjbVE9IgogIH0KfQo=
 ```
 
-Grab the resulting base-64 encoded value and create the following YAML file:
+Now, one it to copy the resulting base-64 encoded value and create the following
+Kubernetes secret descriptor:
 
 ```yaml
 apiVersion: v1
@@ -105,15 +112,15 @@ metadata:
 type: kubernetes.io/dockercfg
 ```
 
-Let Kubernetes know about your secret using `kubectl`:
+Store the secret:
 
 ```bash
 $ kubectl create -f nexus-docker.yaml
 secret "nexus-docker" created
 ```
 
-Now, whenever you need to use a private image in a pod you just need to
-reference this secret:
+Now, whenever one need to use a private image in a pod, one just need to
+reference the newly created secret:
 
 ```yaml
 apiVersion: v1
@@ -123,12 +130,9 @@ metadata:
 spec:
   containers:
     -
-      image: containers.example.com/private/image:1.0.0
+      image: containers.example.com/devops/docker-nexus:3.3.2
       name: my-container
   imagePullSecrets:
     -
       name: nexus-docker
 ```
-
-Kubernetes will now know how to access Nexus in order to pull your private
-Docker images.

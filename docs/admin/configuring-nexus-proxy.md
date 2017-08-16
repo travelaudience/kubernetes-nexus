@@ -9,6 +9,7 @@
 * [Create and distributed the Java Keystore](#java-keystore)
 * [Enable GCP IAM authentication in Nexus](#enable-gcp-iam-auth)
 * [Deploying](#deploying)
+* [Using Nexus with Google Cloud IAM Authentication](#usage)
 
 ## Pre-Requisites
 
@@ -139,3 +140,49 @@ needs.
 1. If one hasn't done so, one must run `kubectl create -f nexus-proxy-ks-secret.yaml`.
 1. Proceed as indicated in [Deploying Nexus](../../README.md#deploying-nexus),
    using `nexus-iam-statefulset.yaml` instead of `nexus-statefulset.yaml`.
+
+
+<a id="usage">
+
+## Using Nexus with Google Cloud IAM Authentication
+
+When Google Cloud IAM authentication is enabled and one first browses Nexus, a
+consent screen asking for a few permissions will be presented. One must click
+"_Allow_" for the authentication process to succeed. This consent screen may
+continue to pop-up from time to time.
+
+**Note:** A Google log-in page may appear before the abovementioned consent
+screen. One must use their organization credentials to log-in before proceeding.
+
+## Using Command-Line Tools
+
+For security reasons, the proxy and tools such as Maven or Docker shouldn't store
+and use GCP organization credentials. **The same credentials are used solely within
+GCP domain**. Therefore one needs a specific set of credentials that can be used
+to authorize access to Nexus repositories.
+After logging-in, these per-user credentials can be queried at
+ `https://nexus.example.com/cli/credentials`.
+
+If authentication with Google Cloud IAM is successful, a result like follows
+is returned:
+
+```json
+{
+    "username": "john.doe@example.com",
+    "password": "eyJ0eXA(...)"
+}
+```
+
+These are the credentials one will use when setting-up their tools.
+Here's one example when configuring Docker:
+
+```bash
+$ docker login containers.example.com
+Username: john.doe@example.com
+Password: eyJ0eXA(...) # Input will be hidden.
+Login Suceeded
+```
+
+**Note:** The credentials obtained through this process are valid for one year,
+but will expire before that period if membership within the organization is
+revoked.
