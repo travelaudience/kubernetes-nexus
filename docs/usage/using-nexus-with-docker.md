@@ -8,7 +8,7 @@ Nexus credentials:
 $ docker login containers.example.com
 ```
 
-**Attention:** If GCP IAM authentication is enabled, [username and password
+**ATTENTION:** If GCP IAM authentication is enabled, [username and password
 **are not** the GCP organization credentials](../admin/configuring-nexus-proxy.md/#usage).
 
 ## Publishing a Docker image
@@ -99,7 +99,10 @@ EOF
 ewogICJjb250YWluZXJzLmV4YW1wbGUuY29tIjogewogICAgInVzZXJuYW1lIjogInVzZXJuYW1lIiwKICAgICJwYXNzd29yZCI6ICJwYXNzd29yZCIsCiAgICAiZW1haWwiOiAiam9obi5kb2VAZXhhbXBsZS5jb20iLAogICAgImF1dGgiOiAiZFhObGNtNWhiV1U2Y0dGemMzZHZjbVE9IgogIH0KfQo=
 ```
 
-Now, one it to copy the resulting base-64 encoded value and create the following
+**ATTENTION**: one must replace the keys and values above according to one's
+environment, i.e. replace `containers.example.com` with the right hostname.
+
+Now, one is to copy the resulting base-64 encoded value and create the following
 Kubernetes secret descriptor:
 
 ```yaml
