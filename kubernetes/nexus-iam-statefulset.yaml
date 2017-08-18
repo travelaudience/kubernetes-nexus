@@ -53,7 +53,7 @@ spec:
             - name: NEXUS_HTTP_HOST
               value: "nexus.example.com"
             - name: NEXUS_RUT_HEADER
-              value: "X-Forwarded-For"
+              value: "X-Forwarded-User"
             - name: UPSTREAM_DOCKER_PORT
               value: "5003"
             - name: UPSTREAM_HTTP_PORT
