@@ -17,7 +17,7 @@ Enabling GCP IAM authentication in `nexus-proxy` requires:
 
 * Access to the _Google Cloud Resource Manager API_.
 * An OAuth consent screen and client ID to be configured.
-* A keystore to sign user tokens (JWT) to be created.
+* A Java keystore to sign user tokens (JWT) to be created.
 
 This document walks through the setup of each of these requirements in detail.
 
@@ -119,7 +119,25 @@ as follows:
 
 ## Enable GCP IAM authentication in Nexus
 
-In order to enable GCP IAM authentication for Nexus, one must edit the
+In order to enable GCP IAM authentication for Nexus, one must first create the
+"_Rut Auth_" capability in the Nexus administration page, as follows:
+
+1. Inside Nexus, go to "_Server Administration and Configuration_ > _System_ >
+   _Capabilities_".
+
+![rut-auth-capability-1](./rut-auth-capability-1.png)
+
+1. Click "_Create capability_" and choose "_Rut Auth_" on the list.
+
+![rut-auth-capability-2](./rut-auth-capability-2.png)
+
+1. When asked for "_HTTP Header Name_" enter `X-Forwarded-User`.
+
+![rut-auth-capability-3](./rut-auth-capability-3.png)
+
+1. Click "_Create capability_".
+
+Then, one must edit the
 `nexus-iam-statefulset.yaml` descriptor, as follows:
 
 1. Set the value of `CLOUD_IAM_AUTH_ENABLED` to `"true"`.
@@ -134,6 +152,11 @@ organization.
 1. Adjust the values of `AUTH_CACHE_TTL` and `SESSION_TTL` according to one's
 needs.
    * Further description of these variables can be found [here](https://github.com/travelaudience/nexus-proxy#environment-variables).
+
+**ATTENTION:** The value of the `NEXUS_RUT_HEADER` variable must match the value
+defined in the "_HTTP Header Name_" field of the "_Rut Auth_" capability in the
+Nexus configuration. If one has chosen a different value in step (3) above, one
+must also update the value of this variable accordingly.
 
 ## Deploying
 
@@ -151,7 +174,7 @@ consent screen asking for a few permissions will be presented. One must click
 "_Allow_" for the authentication process to succeed. This consent screen may
 continue to pop-up from time to time.
 
-**Note:** A Google log-in page may appear before the abovementioned consent
+**ATTENTION:** A Google log-in page may appear before the abovementioned consent
 screen. One must use their organization credentials to log-in before proceeding.
 
 ## Using Command-Line Tools
@@ -183,6 +206,6 @@ Password: eyJ0eXA(...) # Input will be hidden.
 Login Suceeded
 ```
 
-**Note:** The credentials obtained through this process are valid for one year,
+**ATTENTION:** The credentials obtained through this process are valid for one year,
 but will expire before that period if membership within the organization is
-revoked.
+revoked. When credentials expire, the user must request them them as described above.
