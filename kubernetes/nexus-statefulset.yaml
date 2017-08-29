@@ -51,6 +51,8 @@ spec:
               value: "false"
             - name: BIND_PORT
               value: "8080"
+            - name: ENFORCE_HTTPS
+              value: "false"
             - name: NEXUS_DOCKER_HOST
               value: "containers.example.com"
             - name: NEXUS_HTTP_HOST
