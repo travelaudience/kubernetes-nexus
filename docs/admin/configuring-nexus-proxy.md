@@ -21,6 +21,11 @@ Enabling GCP IAM authentication in `nexus-proxy` requires:
 
 This document walks through the setup of each of these requirements in detail.
 
+**ATTENTION**: For users to authenticate, **they must be** part of the GCP
+organization and must use their respective email address as the username.
+For more details, consult the
+[proxy requirements](https://github.com/travelaudience/nexus-proxy#before-proceeding).
+
 <a id="enable-crm-api">
 
 ## Enable Cloud Resource Manager API
