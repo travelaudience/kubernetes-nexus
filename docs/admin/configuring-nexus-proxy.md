@@ -23,6 +23,10 @@ This document walks through the setup of each of these requirements in detail.
 
 **ATTENTION**: For users to authenticate, **they must be** part of the GCP
 organization and must use their respective email address as the username.
+Each user **must also** have "_Organization Viewer_" permissions
+[**at organization-level**](https://cloud.google.com/iam/docs/resource-hierarchy-access-control)
+(i.e., in the "_IAM & Admin_" section of the organization in the GCP UI),
+otherwise they won't be able to authenticate.
 For more details, consult the
 [proxy requirements](https://github.com/travelaudience/nexus-proxy#before-proceeding).
 
