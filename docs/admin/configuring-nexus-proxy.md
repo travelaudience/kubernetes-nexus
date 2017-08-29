@@ -209,3 +209,8 @@ Login Suceeded
 **ATTENTION:** The credentials obtained through this process are valid for one year,
 but will expire before that period if membership within the organization is
 revoked. When credentials expire, the user must request them them as described above.
+
+**ATTENTION:** Every visit to https://nexus.example.com/cli/credentials will return a
+ new authentication token, as the creation and expiration dates are encoded in
+ the token itself. One may use different tokens in different tools **but must**
+ **be aware** that these tokens will expire at different moments.
