@@ -30,7 +30,7 @@ follows:
       <repositories>
         <repository>
           <id>central</id>
-          <url>http://central</url>
+          <url>https://central</url>
           <releases>
             <enabled>true</enabled>
           </releases>
@@ -42,9 +42,7 @@ follows:
      <pluginRepositories>
         <pluginRepository>
           <id>central</id>
-          <url>http://central</url>
-          <id>central</id>
-          <url>http://central</url>
+          <url>https://central</url>
           <releases>
             <enabled>true</enabled>
           </releases>
