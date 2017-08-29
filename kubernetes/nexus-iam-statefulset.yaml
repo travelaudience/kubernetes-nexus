@@ -79,7 +79,7 @@ spec:
               value: "60000"
             - name: SESSION_TTL
               value: "86400000"
-          image: "quay.io/travelaudience/docker-nexus-proxy:2.0.0"
+          image: "quay.io/travelaudience/docker-nexus-proxy:2.1.0"
           imagePullPolicy: Always
           name: nexus-proxy
           ports:
