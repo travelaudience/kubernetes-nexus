@@ -13,12 +13,12 @@ spec:
         app: nexus
     spec:
       containers:
-        - env:
-            - name: INSTALL4J_ADD_VM_PARAMS
-              value: "-Xms1200M -Xmx1200M -XX:MaxDirectMemorySize=2G -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+        - name: nexus
           image: "quay.io/travelaudience/docker-nexus:3.5.0"
           imagePullPolicy: Always
-          name: nexus
+          env:
+            - name: INSTALL4J_ADD_VM_PARAMS
+              value: "-Xms1200M -Xmx1200M -XX:MaxDirectMemorySize=2G -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
           resources:
             requests:
               cpu: 250m
@@ -41,7 +41,10 @@ spec:
               name: nexus-data
             - mountPath: /nexus-data/backup
               name: nexus-data-backup
-        - env:
+        - name: nexus-proxy
+          image: "quay.io/travelaudience/docker-nexus-proxy:2.1.0"
+          imagePullPolicy: Always
+          env:
             - name: ALLOWED_USER_AGENTS_ON_ROOT_REGEX
               value: "GoogleHC"
             - name: CLOUD_IAM_AUTH_ENABLED
@@ -79,9 +82,6 @@ spec:
               value: "60000"
             - name: SESSION_TTL
               value: "86400000"
-          image: "quay.io/travelaudience/docker-nexus-proxy:2.1.0"
-          imagePullPolicy: Always
-          name: nexus-proxy
           ports:
             - containerPort: 8080
               name: nexus-proxy
@@ -89,7 +89,10 @@ spec:
             - mountPath: /nexus-proxy-ks
               name: nexus-proxy-ks
               readOnly: true
-        - env:
+        - name: nexus-backup
+          image: "quay.io/travelaudience/docker-nexus-backup:1.2.0"
+          imagePullPolicy: Always
+          env:
             - name: NEXUS_AUTHORIZATION
               valueFrom:
                 secretKeyRef:
@@ -109,9 +112,6 @@ spec:
               value: "60"
             - name: TRIGGER_FILE
               value: .backup
-          image: "quay.io/travelaudience/docker-nexus-backup:1.2.0"
-          imagePullPolicy: Always
-          name: nexus-backup
           volumeMounts:
             - mountPath: /nexus-data
               name: nexus-data
