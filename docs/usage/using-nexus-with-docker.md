@@ -89,10 +89,8 @@ One is to copy the base-64 encoded value of key `auth` and run:
 $ cat << EOF | base64
 {
   "containers.example.com": {
-    "username": "username",
-    "password": "password",
     "email": "john.doe@example.com",
-    "auth": "dXNlcm5hbWU6cGFzc3dvcmQ="
+    "auth": "YWRtaW46YWRtaW4xMjM="
   }
 }
 EOF
