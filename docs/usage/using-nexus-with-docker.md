@@ -83,6 +83,8 @@ The result should look as below:
 }
 ```
 
+## Using secret type `kubernetes.io/dockercfg`
+
 One is to copy the base-64 encoded value of key `auth` and run:
 
 ```bash
@@ -111,6 +113,65 @@ kind: Secret
 metadata:
   name: nexus-docker
 type: kubernetes.io/dockercfg
+```
+
+Store the secret:
+
+```bash
+$ kubectl create -f nexus-docker.yaml
+secret "nexus-docker" created
+```
+
+Now, whenever one need to use a private image in a pod, one just need to
+reference the newly created secret:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-pod
+spec:
+  containers:
+    -
+      image: containers.example.com/devops/docker-nexus:3.3.2
+      name: my-container
+  imagePullSecrets:
+    -
+      name: nexus-docker
+```
+
+## Using secret type `kubernetes.io/dockerconfigjson`
+
+One is to copy the base-64 encoded value of key `auth` and run:
+
+```bash
+$ cat << EOF | base64
+{
+  "auths": {
+    "containers.example.com": {
+      "email": "john.doe@example.com",
+      "auth": "YWRtaW46YWRtaW4xMjM="
+    }
+  }
+}
+EOF
+ewogICJhdXRocyI6IHsKICAgICJjb250YWluZXJzLmV4YW1wbGUuY29tIjogewogICAgICAiZW1haWwiOiAiam9obi5kb2VAZXhhbXBsZS5jb20iLAogICAgICAiYXV0aCI6ICJZV1J0YVc0NllXUnRhVzR4TWpNPSIKICAgIH0KICB9Cn0K
+```
+
+**ATTENTION**: one must replace the keys and values above according to one's
+environment, i.e. replace `containers.example.com` with the right hostname.
+
+Now, one is to copy the resulting base-64 encoded value and create the following
+Kubernetes secret descriptor:
+
+```yaml
+apiVersion: v1
+data:
+  .dockerconfigjson: ewogICJhdXRocyI6IHsKICAgICJjb250YWluZXJzLmV4YW1wbGUuY29tIjogewogICAgICAiZW1haWwiOiAiam9obi5kb2VAZXhhbXBsZS5jb20iLAogICAgICAiYXV0aCI6ICJZV1J0YVc0NllXUnRhVzR4TWpNPSIKICAgIH0KICB9Cn0K
+kind: Secret
+metadata:
+  name: nexus-docker
+type: kubernetes.io/dockerconfigjson
 ```
 
 Store the secret:
