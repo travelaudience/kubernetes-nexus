@@ -8,6 +8,67 @@ since one only depends on their Nexus availability and not the public repositori
 Maven can also be configured to upload artifacts to Nexus, enabling the management
 of artifacts private to an organization.
 
+## Configuring credentials
+
+To be able to upload/download artifacts, first it is required to specify the credentials to the `nexus` repository in the global Maven configuration (the `~/.m2/settings.xml`):
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+  <servers>
+   <server>
+      <id>nexus</id>
+      <username>the-username</username>
+      <password>the-password</password>
+   </server>
+  </servers>
+  (...)
+</settings>
+```
+
+**Attention:** If GCP IAM authentication is enabled, username and password
+**are not the GCP organization credentials** but are instead the [credentials obtained with Nexus cli](../admin/configuring-nexus-proxy.md#using-command-line-tools).
+
+### Encrypting credentials
+
+**Note**: Encrypting credentials is a security best-pratice.
+
+Maven provides an easy way to encrypt passwords for securely storing the
+credentials needed to access private repositories. In order to do so, one must
+create a _master password_ as follows:
+
+```shell
+$ mvn --encrypt-master-password
+Master password:
+{sY/CwSgHqY8HeC4obv5H1zPBYwjt5F8k1SjeegD3/vw=}
+```
+
+One is to copy the resulting hash value and store it in `~/.m2/security-settings.xml`:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<settingsSecurity>
+  <master>{sY/CwSgHqY8HeC4obv5H1zPBYwjt5F8k1SjeegD3/vw=}</master>
+</settingsSecurity>
+```
+
+Now, one can start encrypting passwords by running:
+
+```
+$ mvn --encrypt-password
+Password:
+{idR6S1+DYEMHFO56avrFg3NHGHOt74zdFjfKl8Cm3Bg=}
+```
+
+**Attention:** If GCP IAM authentication is enabled, [username and password
+**are not** the GCP organization credentials](../admin/configuring-nexus-proxy.md/#usage).
+
+Replacing `the-password` in `~/.m2/settings.xml` with this value will still
+allow one to deploy private artifacts to Nexus while keeping one's credentials
+secure.
+For further information, please refer to
+[Password Encryption](https://maven.apache.org/guides/mini/guide-encryption.html).
+
 ## Downloading artifacts from Nexus
 
 In order to enable Maven to download artifacts from Nexus, one is to edit the
@@ -104,26 +165,6 @@ In order to upload private artifacts to Nexus, one must configure the
 </distributionManagement>
 ```
 
-This, in turn, requires credentials to the `nexus` repository to be specified in
-the global Maven configuration (the `~/.m2/settings.xml` file we edited before):
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<settings>
-  <servers>
-   <server>
-      <id>nexus</id>
-      <username>the-username</username>
-      <password>the-password</password>
-   </server>
-  </servers>
-  (...)
-</settings>
-```
-
-**Attention:** If GCP IAM authentication is enabled, [username and password
-**are not** the GCP organization credentials](../admin/configuring-nexus-proxy.md/#usage).
-
 After one is done with Maven configuration, publishing private artifacts should
 be as easy as running:
 
@@ -142,43 +183,3 @@ Uploading: https://nexus.example.com/repository/maven-snapshots/com/example/dojo
 Uploaded: https://nexus.example.com/repository/maven-snapshots/com/example/dojo/dojo-nexus/2.0.0-SNAPSHOT/dojo-nexus-2.0.0-20170610.093044-6.pom (1.7 kB at 5.3 kB/s)
 (...)
 ```
-
-### Encrypting credentials
-
-**Note**: Encrypting credentials is a security best-pratice.
-
-Maven provides an easy way to encrypt passwords for securely storing the
-credentials needed to access private repositories. In order to do so, one must
-create a _master password_ as follows:
-
-```shell
-$ mvn --encrypt-master-password
-Master password:
-{sY/CwSgHqY8HeC4obv5H1zPBYwjt5F8k1SjeegD3/vw=}
-```
-
-One is to copy the resulting hash value and store it in `~/.m2/security-settings.xml`:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<settingsSecurity>
-  <master>{sY/CwSgHqY8HeC4obv5H1zPBYwjt5F8k1SjeegD3/vw=}</master>
-</settingsSecurity>
-```
-
-Now, one can start encrypting passwords by running:
-
-```
-$ mvn --encrypt-password
-Password:
-{idR6S1+DYEMHFO56avrFg3NHGHOt74zdFjfKl8Cm3Bg=}
-```
-
-**Attention:** If GCP IAM authentication is enabled, [username and password
-**are not** the GCP organization credentials](../admin/configuring-nexus-proxy.md/#usage).
-
-Replacing `the-password` in `~/.m2/settings.xml` with this value will still
-allow one to deploy private artifacts to Nexus while keeping one's credentials
-secure.
-For further information, please refer to
-[Password Encryption](https://maven.apache.org/guides/mini/guide-encryption.html).
