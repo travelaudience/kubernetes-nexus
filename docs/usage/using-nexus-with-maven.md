@@ -60,14 +60,14 @@ Password:
 {idR6S1+DYEMHFO56avrFg3NHGHOt74zdFjfKl8Cm3Bg=}
 ```
 
-**Attention:** If GCP IAM authentication is enabled, [username and password
-**are not** the GCP organization credentials](../admin/configuring-nexus-proxy.md/#usage).
-
 Replacing `the-password` in `~/.m2/settings.xml` with this value will still
 allow one to deploy private artifacts to Nexus while keeping one's credentials
 secure.
 For further information, please refer to
 [Password Encryption](https://maven.apache.org/guides/mini/guide-encryption.html).
+
+**Attention:** If GCP IAM authentication is enabled, username and password
+**are not the GCP organization credentials** but are instead the [credentials obtained with Nexus cli](../admin/configuring-nexus-proxy.md#using-command-line-tools).
 
 ## Downloading artifacts from Nexus
 
