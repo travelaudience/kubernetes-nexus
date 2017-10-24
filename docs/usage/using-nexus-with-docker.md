@@ -63,9 +63,9 @@ The image has been pulled successfully and is now available locally.
 ## Pulling a Docker image from within Kubernetes
 
 For Kubernetes to be able to pull a private container image, a secret containing
-the necessary Docker configuration must be created. One simple way to do it is to
-log-in (`docker login`) to the container registry and check the generated
-configuration as follows:
+the necessary Docker configuration must be created. Below one can see 2 different ways of doing the first part which is getting the **auth** field.
+
+### Linux
 
 ```shell
 $ cat ~/.docker/config.json
@@ -81,6 +81,20 @@ The result should look as below:
     }
   }
 }
+```
+
+### OSX
+
+Since OSX uses keychain one cannot use the info in the `config.json` file.
+Instead the **auth** content can be generated with the command below:
+```bash
+echo -n "username:password" | base64
+```
+
+Example:
+```bash
+echo -n "admin:admin123" | base64
+YWRtaW46YWRtaW4xMjM=
 ```
 
 ## Using secret type `kubernetes.io/dockercfg`
