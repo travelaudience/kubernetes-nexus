@@ -90,9 +90,11 @@ One is to copy the base-64 encoded value of key `auth` and run:
 ```bash
 $ cat << EOF | base64
 {
-  "containers.example.com": {
-    "email": "john.doe@example.com",
-    "auth": "YWRtaW46YWRtaW4xMjM="
+  "auths": {
+    "containers.example.com": {
+      "email": "john.doe@example.com",
+      "auth": "YWRtaW46YWRtaW4xMjM="
+    }
   }
 }
 EOF
