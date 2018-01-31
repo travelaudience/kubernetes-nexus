@@ -19,6 +19,12 @@ resolvers += "My Nexus" at "https://nexus.example.com/repository/maven-public/"
 // This will prevent access to Maven Central.
 externalResolvers := Resolver.withDefaultResolvers(resolvers.value, mavenCentral = false)
 ```
+if you are using `sbt > 1.x`, you need to use `combineDefaultResolvers` method instead:
+
+```
+externalResolvers := Resolver.combineDefaultResolvers(resolvers.value.toVector, false)
+```
+
 
 One can check if their configuration is working by deleting the `~/.ivy2/cache`
 directory and running:
