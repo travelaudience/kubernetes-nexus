@@ -65,7 +65,7 @@ credentials += Credentials(Path.userHome / ".ivy2" / ".credentials")
 `~/.ivy2/.credentials` should look like follows:
 
 ```
-realm=Sonatype Nexus Repository Manager
+realm=nexus-proxy
 host=nexus.example.com
 user=<the-username>
 password=<the-password>
