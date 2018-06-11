@@ -29,6 +29,7 @@ Edit the corresponding file as follows:
 [global]
 index = https://nexus.example.com/repository/pypi-all/pypi
 index-url = https://nexus.example.com/repository/pypi-all/simple
+no-cache-dir = false 
 ```
 
 This will instruct `pip` to search for and install packages from the `pypi-all`
@@ -59,6 +60,7 @@ There may be some scenarios in which the Nexus is deployed behind a proxy which 
 [global]
 index = https://username:password@nexus.example.com/repository/pypi-all/pypi
 index-url = https://username:password@nexus.example.com/repository/pypi-all/simple
+no-cache-dir = false 
 ```
 
 **Attention:** If GCP IAM authentication is enabled, [username and password
