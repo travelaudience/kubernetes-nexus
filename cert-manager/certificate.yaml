@@ -1,0 +1,19 @@
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: nexus-tls
+spec:
+  secretName: nexus-tls
+  issuerRef:
+    name: letsencrypt-production
+    kind: Issuer
+  dnsNames:
+  - containers.example.com
+  - nexus.example.com
+  acme:
+    config:
+    - http01:
+        ingress: nexus
+      domains:
+      - containers.example.com
+      - nexus.example.com

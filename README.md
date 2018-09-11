@@ -78,20 +78,24 @@ become available over HTTP at http://nexus.example.com.
 ### Securing Nexus with HTTPS
 
 In order to secure Nexus external access one must configure HTTPS access.
-The easiest and cheapest way to obtain a trusted TLS certicate is using
+The easiest and cheapest way to obtain a trusted TLS certificate is using
 [Let's Encrypt](https://letsencrypt.org/), and the easiest way to automate the
 process of obtaining and renewing certificates from Let's Encrypt is by using
-[`kube-lego`](https://github.com/jetstack/kube-lego):
+[`cert-manager`](https://github.com/jetstack/cert-manager):
+
+The easiest way is to install `cert-manager` via helm but static manifest available as well.
+You can follow [this](https://cert-manager.readthedocs.io/en/latest/getting-started/2-installing.html) installation instructions.
+
+As soon as it starts, `cert-manager` will start monitoring _Ingress_ resources and
+requesting certificates from Let's Encrypt.
+
+After installation, you will need to add Issuer and a certificate manifests to Nexus namespace.
 
 ```bash
-$ cd kube-lego/
-$ kubectl create -f kube-lego-namespace.yaml
-$ kubectl create -f kube-lego-configmap.yaml
-$ kubectl create -f kube-lego-deployment.yaml
+$ cd cert-manager/
+$ kubectl create -f issuer.yaml
+$ kubectl create -f certificate.yaml
 ```
-
-As soon as it starts, `kube-lego` will start monitoring _Ingress_ resources and
-requesting certificates from Let's Encrypt.
 
 **NOTE**: Let's Encrypt must be able to reach port `80` on domains for which
 certificates are requested, hence the annotation `kubernetes.io/ingress.allow-http`
