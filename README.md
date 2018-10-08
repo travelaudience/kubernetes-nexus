@@ -238,7 +238,7 @@ Now one should go as follows:
 1. Remove everything _under_ `/nexus-data/backup/`,
    `/nexus-data/blobs/default/` and `/nexus-data/db/`
 1. `tar -xvf blobstore.tar --strip-components 3 -C /nexus-data/blobs/default/`.
-1. `tar -xvf databases.tar --strip-components 2 -C /nexus-data/backup/`
+1. `tar -xvf databases.tar --strip-components 2 -C /nexus-data/backup/`. For Nexus => 3.11.0, the folder where the backup is automatically restored from is called 'restore-from-backup' instaed of 'backup' (https://issues.sonatype.org/browse/NEXUS-14493).
 
 At this point the backup is ready to be restored by Nexus and you can leave the _nexus-backup_ container.
 Now go back to the terminal of the _nexus_ container and do:
