@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
@@ -7,6 +7,9 @@ metadata:
 spec:
   replicas: 1
   serviceName: nexus
+  selector:
+    matchLabels:
+      app: nexus
   template:
     metadata:
       labels:
@@ -126,8 +129,6 @@ spec:
             secretName: nexus-proxy-ks
   volumeClaimTemplates:
     - metadata:
-        annotations:
-          volume.beta.kubernetes.io/storage-class: standard
         name: nexus-data
       spec:
         accessModes:
@@ -135,9 +136,8 @@ spec:
         resources:
           requests:
             storage: 1024Gi
+        storageClassName: standard
     - metadata:
-        annotations:
-          volume.beta.kubernetes.io/storage-class: standard
         name: nexus-data-backup
       spec:
         accessModes:
@@ -145,3 +145,4 @@ spec:
         resources:
           requests:
             storage: 32Gi
+        storageClassName: standard
