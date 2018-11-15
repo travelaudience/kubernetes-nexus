@@ -144,7 +144,7 @@ file that reacts to changes and starts the process.
 The second task, called `backup-2`, is responsible for backing-up the Nexus
 databases, configurations and metadata.
 In order to create it, one is to head over to _Administration/Tasks_, click
-_Create task_, choose _Export configuration & metadata for backup_ and proceed
+_Create task_, choose _Export databases for backup_ and proceed
 as detailed below:
 
 ![backup-2-task](backup-2-task.png)

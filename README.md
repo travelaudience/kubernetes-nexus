@@ -35,6 +35,14 @@ permissions enabled (`https://www.googleapis.com/auth/devstorage.read_write` sco
 * A [Google Cloud Storage](https://cloud.google.com/storage/) bucket (e.g.,
   `nexus-backup`).
 
+
+**Attention**: On RBAC-enabled clusters, and due to [the way GKE checks permissions](https://cloud.google.com/container-engine/docs/role-based-access-control#defining_permissions_in_a_role), one must also grant themselves the `cluster-admin` role *manually* before proceeding:
+
+```bash
+$ MY_GCLOUD_USER=$(gcloud info | grep Account | awk -F'[][]' '{print $2}')
+$ kubectl create clusterrolebinding ${MY_GCLOUD_USER} --clusterrole=cluster-admin --user=${MY_GCLOUD_USER}
+```
+
 ## Deployment
 
 ### Deploying Nexus
@@ -58,17 +66,17 @@ $ NEXUS_AUTH=$(echo -n "Basic ${NEXUS_CREDENTIALS}" | base64)
 $ sed -i.bkp "s/QmFzaWMgWVdSdGFXNDZZV1J0YVc0eE1qTT0=/${NEXUS_AUTH}/" nexus-secret.yaml
 ```
 
-After updating `nexus-secret.yaml`, deploying Nexus as follows:
+One must also update the contents of `nexus-statefulset.yaml` and `nexus-ingress.yaml` according to one's setup _before_ proceeding.
+
+After updating `nexus-secret.yaml`, `nexus-statefulset.yaml` and `nexus-ingress.yaml`, one may deploy Nexus as follows:
 
 **Attention**: If one wants to have GCP IAM authentication enabled, one must
-follow [the following instructions](docs/admin/configuring-nexus-proxy.md).
+follow [these instructions](docs/admin/configuring-nexus-proxy.md) instead.
 
 ```bash
-$ kubectl create -f nexus-configmap.yaml
 $ kubectl create -f nexus-secret.yaml
 $ kubectl create -f nexus-statefulset.yaml
 $ kubectl create -f nexus-proxy-svc.yaml
-$ kubectl create -f nexus-http-svc.yaml
 $ kubectl create -f nexus-ingress.yaml
 ```
 
@@ -83,16 +91,18 @@ The easiest and cheapest way to obtain a trusted TLS certificate is using
 process of obtaining and renewing certificates from Let's Encrypt is by using
 [`cert-manager`](https://github.com/jetstack/cert-manager):
 
-The easiest way is to install `cert-manager` via helm but static manifest available as well.
-You can follow [this](https://cert-manager.readthedocs.io/en/latest/getting-started/2-installing.html) installation instructions.
+The easiest way is to install `cert-manager` via Helm, but a static manifest is available as well.
+One can follow [these](https://cert-manager.readthedocs.io/en/latest/getting-started/2-installing.html) installation instructions.
 
 As soon as it starts, `cert-manager` will start monitoring _Ingress_ resources and
 requesting certificates from Let's Encrypt.
 
-After installation, you will need to add Issuer and a certificate manifests to Nexus namespace.
+After installation, one will need to setup an issuer and actually request a certificate for Nexus:
+
+**Attention:** One must edit the `certificate.yaml` file according to one's setup _before_ running the following commands.
 
 ```bash
-$ cd cert-manager/
+$ cd ../cert-manager/
 $ kubectl create -f issuer.yaml
 $ kubectl create -f certificate.yaml
 ```
@@ -108,7 +118,7 @@ the `admin` password to the secure password one decided above.
 
 ### Configuring Nexus
 
-Please head over to
+One should head over to
 [`docs/admin/configuring-nexus.md`](docs/admin/configuring-nexus.md)
 for information on how to configure Nexus.
 
@@ -118,7 +128,7 @@ for information on how to configure Nexus.
 permissions on GCP Cloud Storage in order to upload backups.
 
 The backup procedure uses Google Cloud Storage to save backups. In order to
-configure a backup retention policy, head over to the `backup-lifecycle`
+configure a backup retention policy, one should head over to the `backup-lifecycle`
 directory and install one of the available policies by running:
 
 ```bash
@@ -173,13 +183,7 @@ permissions on GCP Cloud Storage in order to upload backups.
 ### Backup
 
 Nexus has a built-in
-[_Export configuration & metadata for backup_](http://books.sonatype.com/nexus-book/3.3/reference/backup.html#backup-task)
-task which we use to backup configuration and metadata. However, the generated
-backup doesn't include
-[blob stores](http://books.sonatype.com/nexus-book/3.3/reference/admin.html#admin-repository-blobstores),
-rendering it semi-useless in a disaster recovery scenario. It is thus of the
-utmost importance to backup blob stores separately and at roughly the same time
-this task runs in order to achieve consistent backups.
+[_Export databases for backup_](https://help.sonatype.com/repomanager3/backup-and-restore/configure-and-run-the-backup-task) task which can be used to backup configuration and metadata. However, the generated backup doesn't include [blob stores](https://help.sonatype.com/repomanager3/high-availability/configuring-blob-stores), rendering it semi-useless in a disaster recovery scenario. It is thus of the utmost importance to backup blob stores separately and at roughly the same time this task runs in order to achieve consistent backups.
 
 This is the role of the
 [`nexus-backup`](https://github.com/travelaudience/docker-nexus-backup)
@@ -225,11 +229,16 @@ $ mv /etc/service/nexus/ /nexus-service/         # Prevent `runsvdir` from respa
 $ pkill java                                     # Ask for Nexus to terminate gracefully.
 ```
 
-At this point, Nexus is stopped but the container is still running, giving us a
-chance to perform the restore procedure. (Do not close this terminal yet)
+At this point, Nexus is stopped but the container is still running, giving one a
+chance to perform the restore procedure.
 
-Open another terminal window and login into the nexus-backup container so that you can use gsutil to retrieve the desired backup.
-`kubectl exec -i -t nexus-0 --container nexus-backup -- sh`
+**Attention**: One must not close this terminal window just yet.
+
+One should now open another terminal window and login into the `nexus-backup` container in order to use `gsutil` to retrieve the desired backup.
+
+```shell
+$ kubectl exec -i -t nexus-0 --container nexus-backup -- /bin/bash
+```
 
 Now one should go as follows:
 
@@ -237,18 +246,18 @@ Now one should go as follows:
    from the last known good backup.
 1. Remove everything _under_ `/nexus-data/backup/`,
    `/nexus-data/blobs/default/` and `/nexus-data/db/`
-1. `tar -xvf blobstore.tar --strip-components 3 -C /nexus-data/blobs/default/`.
-1. `tar -xvf databases.tar --strip-components 2 -C /nexus-data/backup/`. For Nexus => 3.11.0, the folder where the backup is automatically restored from is called 'restore-from-backup' instaed of 'backup' (https://issues.sonatype.org/browse/NEXUS-14493).
+1. Run `tar -xvf blobstore.tar --strip-components 3 -C /nexus-data/blobs/default/`.
+4. Run `tar -xvf databases.tar --strip-components 2 -C /nexus-data/restore-from-backup/`.
 
-At this point the backup is ready to be restored by Nexus and you can leave the _nexus-backup_ container.
-Now go back to the terminal of the _nexus_ container and do:
+At this point the backup is ready to be restored by Nexus and one can leave the _nexus-backup_ container.
+One must now go back to the terminal of the `nexus` container and run the following commands:
 
 ```
 $ mv /nexus-service/ /etc/service/nexus/         # Make `runsvdir` start Nexus again.
 $ exit                                           # Bye!
 ```
 
-This will automatically start nexus and restore the backups.
+This will automatically start Nexus and perform the restore process.
 
 If one watches the `nexus` container logs as it boots, one should see an indication
 that a restore procedure is in place. After a few minutes access should be
