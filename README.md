@@ -4,35 +4,35 @@ Nexus Repository Manager OSS (3.13.0) on top of Kubernetes.
 
 ## Table of Contents
 
-* [Pre-Requisites](#pre-requisites)
-* [Deployment](#deployment)
-  * [Deploying Nexus](#deploying-nexus)
-  * [Securing Nexus with HTTPS](#securing-nexus-with-https)
-  * [Configuring Nexus](#configuring-nexus)
-  * [Configuring Backup Retention](#configuring-backup-retention)
-* [Using Nexus](#usage)
-  *  [Docker](#usage-docker)
-  *  [Maven](#usage-maven)
-  *  [Gradle](#usage-gradle)
-  *  [sbt](#usage-sbt)
-  *  [Python](#usage-python)
-* [Backup and Restore](#backup-and-restore)
-  * [Backup](#backup)
-  * [Restore](#restore)
+- [Pre-Requisites](#pre-requisites)
+- [Deployment](#deployment)
+  - [Deploying Nexus](#deploying-nexus)
+  - [Securing Nexus with HTTPS](#securing-nexus-with-https)
+  - [Configuring Nexus](#configuring-nexus)
+  - [Configuring Backup Retention](#configuring-backup-retention)
+- [Using Nexus](#usage)
+  - [Docker](#usage-docker)
+  - [Maven](#usage-maven)
+  - [Gradle](#usage-gradle)
+  - [sbt](#usage-sbt)
+  - [Python](#usage-python)
+- [Backup and Restore](#backup-and-restore)
+  - [Backup](#backup)
+  - [Restore](#restore)
 
 ## Pre-Requisites
 
-* A working Kubernetes cluster (v1.10.7 or newer) with Cloud Storage read-write
+- A working Kubernetes cluster (v1.10.7 or newer) with Cloud Storage read-write
 permissions enabled (`https://www.googleapis.com/auth/devstorage.read_write` scope)
-* A working installation of `kubectl` configured to access the
+- A working installation of `kubectl` configured to access the
   cluster.
-* A working installation of `gcloud` configured to access the Google Cloud
+- A working installation of `gcloud` configured to access the Google Cloud
   Platform project.
-* A global static IPv4 address (e.g., `static-ip-name`).
-* A DNS A record `nexus.example.com` pointing to this IPv4 address.
-* A DNS CNAME record `containers.example.com` pointing to
+- A global static IPv4 address (e.g., `static-ip-name`).
+- A DNS A record `nexus.example.com` pointing to this IPv4 address.
+- A DNS CNAME record `containers.example.com` pointing to
   `nexus.example.com`.
-* A [Google Cloud Storage](https://cloud.google.com/storage/) bucket (e.g.,
+- A [Google Cloud Storage](https://cloud.google.com/storage/) bucket (e.g.,
   `nexus-backup`).
 
 
@@ -247,7 +247,7 @@ Now one should go as follows:
 1. Remove everything _under_ `/nexus-data/backup/`,
    `/nexus-data/blobs/default/` and `/nexus-data/db/`
 1. Run `tar -xvf blobstore.tar --strip-components 3 -C /nexus-data/blobs/default/`.
-4. Run `tar -xvf databases.tar --strip-components 2 -C /nexus-data/restore-from-backup/`.
+1. Run `tar -xvf databases.tar --strip-components 2 -C /nexus-data/restore-from-backup/`.
 
 At this point the backup is ready to be restored by Nexus and one can leave the _nexus-backup_ container.
 One must now go back to the terminal of the `nexus` container and run the following commands:
