@@ -45,13 +45,15 @@ spec:
             - mountPath: /nexus-data/backup
               name: nexus-data-backup
         - name: nexus-proxy
-          image: "quay.io/travelaudience/docker-nexus-proxy:2.3.0"
+          image: "quay.io/travelaudience/docker-nexus-proxy:2.4.0"
           imagePullPolicy: Always
           env:
             - name: ALLOWED_USER_AGENTS_ON_ROOT_REGEX
               value: "GoogleHC"
             - name: CLOUD_IAM_AUTH_ENABLED
               value: "true"
+            - name: JWT_REQUIRES_MEMBERSHIP_VERIFICATION
+              value: "false"
             - name: BIND_PORT
               value: "8080"
             - name: ENFORCE_HTTPS
