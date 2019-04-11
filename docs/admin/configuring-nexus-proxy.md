@@ -111,7 +111,7 @@ as follows:
     type: Opaque
     data:
       keystore: $(cat /path/to/keystore.jceks | base64)
-      password: $(echo -n "KEYSTORE_PASSWORD" | base64)
+      password: $(echo -n KEYSTORE_PASSWORD | base64)
     EOF
     ```
 
