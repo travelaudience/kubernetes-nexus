@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: nexus
-          image: "quay.io/travelaudience/docker-nexus:3.15.2"
+          image: "quay.io/travelaudience/docker-nexus:3.17.0"
           imagePullPolicy: Always
           env:
             - name: INSTALL4J_ADD_VM_PARAMS
@@ -45,7 +45,7 @@ spec:
             - mountPath: /nexus-data/backup
               name: nexus-data-backup
         - name: nexus-proxy
-          image: "quay.io/travelaudience/docker-nexus-proxy:2.4.0_8u191"
+          image: "quay.io/travelaudience/docker-nexus-proxy:2.5.0"
           imagePullPolicy: Always
           env:
             - name: ALLOWED_USER_AGENTS_ON_ROOT_REGEX
@@ -70,7 +70,7 @@ spec:
             - containerPort: 8080
               name: nexus-proxy
         - name: nexus-backup
-          image: "quay.io/travelaudience/docker-nexus-backup:1.4.0"
+          image: "quay.io/travelaudience/docker-nexus-backup:1.5.0"
           imagePullPolicy: Always
           env:
             - name: NEXUS_AUTHORIZATION
