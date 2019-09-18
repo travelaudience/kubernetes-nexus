@@ -55,6 +55,16 @@ publishTo := {
 }
 ```
 
+For sbt 1.x one should disable gigahorse setting because of a (issue)[https://github.com/sbt/sbt/issues/3570] with GCloud hosting Nexus
+```
+updateOptions := updateOptions.value.withGigahorse(false),
+```
+
+A similar issue happens when assemblying a fat jar with:
+```
+addArtifact(artifact in (Compile, assembly), assembly)
+```
+
 Also, one must provide their Nexus credentials.
 The best way is to store and load them from `~/.ivy2/.credentials`:
 
