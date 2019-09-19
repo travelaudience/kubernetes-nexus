@@ -55,7 +55,7 @@ publishTo := {
 }
 ```
 
-For sbt 1.x one should disable gigahorse setting because of a (issue)[https://github.com/sbt/sbt/issues/3570] with GCloud hosting Nexus
+For sbt 1.x one should disable gigahorse setting because of [this issue](https://github.com/sbt/sbt/issues/3570) with GCloud hosting Nexus
 ```
 updateOptions := updateOptions.value.withGigahorse(false),
 ```
