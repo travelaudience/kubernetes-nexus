@@ -60,7 +60,7 @@ For sbt 1.x one should disable gigahorse setting because of [this issue](https:/
 updateOptions := updateOptions.value.withGigahorse(false),
 ```
 
-A similar issue happens when assemblying a fat jar with:
+A similar issue happens when assemblying a fat jar so one should not use:
 ```
 addArtifact(artifact in (Compile, assembly), assembly)
 ```
