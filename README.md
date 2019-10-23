@@ -229,6 +229,8 @@ $ mv /etc/service/nexus/ /nexus-service/         # Prevent `runsvdir` from respa
 $ pkill java                                     # Ask for Nexus to terminate gracefully.
 ```
 
+**Attention**: after terminating Nexus, with the default readiness/liveness probe settings in the chart kubernetes will restart the nexus pod before you've been able to untar the back-up files. If you meet that problem (the `sh` into the `nexus` container terminates abruptly with exit code 137), you may overcome it by extending the time limits of the readiness/liveness probes: `kubectl edit statefulset nexus` and change `spec.template.spec.containers.livenessProbe.failureThreshold` and `spec.template.spec.containers.readinessProbe.failureThreshold` for the `nexus` container to a large value, e.g. 100. Once you're done with the restore, don't forget to reset those values to their initial setting!!
+
 At this point, Nexus is stopped but the container is still running, giving one a
 chance to perform the restore procedure.
 
