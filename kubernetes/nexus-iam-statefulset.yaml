@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: nexus
-          image: "quay.io/travelaudience/docker-nexus:3.17.0"
+          image: "quay.io/travelaudience/docker-nexus:3.19.1"
           imagePullPolicy: Always
           env:
             - name: INSTALL4J_ADD_VM_PARAMS
